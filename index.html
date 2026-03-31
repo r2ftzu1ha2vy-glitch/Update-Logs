@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Update Logs</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #1c1c1c; /* Dark background for contrast */
+      color: #FFD700; /* Gold color */
+      font-family: 'Playfair Display', serif; /* Formal, rich font */
+    }
+
+    .header {
+      text-align: center;
+      font-size: 4rem;
+      margin: 50px 0 30px 0;
+      text-shadow: 
+        0 0 10px #FFD700, 
+        0 0 20px #FFD700, 
+        0 0 30px #FFD700,
+        0 0 40px #FFD700;
+    }
+
+    .updates {
+      max-width: 800px;
+      margin: 0 auto;
+      font-size: 1.2rem;
+      line-height: 1.8;
+      padding: 0 20px;
+    }
+
+    .update-item {
+      margin-bottom: 20px;
+      padding: 15px;
+      border-left: 4px solid #FFD700;
+      background: rgba(255, 215, 0, 0.05);
+      border-radius: 5px;
+      transition: transform 0.2s;
+    }
+
+    .update-item:hover {
+      transform: scale(1.02);
+    }
+
+    .update-date {
+      font-weight: bold;
+      margin-bottom: 5px;
+      color: #fff8dc; /* Lighter gold/cream for contrast */
+    }
+  </style>
+</head>
+<body>
+  <div class="header">Update Logs:</div>
+  
+  <div class="updates">
+    <div class="update-item">
+      <div class="update-date">2026-03-31</div>
+      <div>Added glowing gold header and formal font styling for Update Logs page.</div>
+    </div>
+
+    <div class="update-item">
+      <div class="update-date">2026-03-25</div>
+      <div>Improved readability of updates with hover effect and subtle background.</div>
+    </div>
+
+    <div class="update-item">
+      <div class="update-date">2026-03-20</div>
+      <div>Initial version of the Update Logs page created with basic structure.</div>
+    </div>
+  </div>
+</body>
+</html>
