@@ -3,64 +3,404 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Update Logs</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <title>Update Logs — NoteShelf</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;900&family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
   <style>
+    /* ── Variables (mirrored from NoteShelf) ── */
+    :root {
+      --gold:       #FFD700;
+      --gold-light: #FFE97A;
+      --gold-dim:   #B8960C;
+      --gold-glow:  rgba(255,215,0,0.28);
+      --gold-muted: rgba(255,215,0,0.07);
+      --obsidian:   #07060A;
+      --ink:        #0D0B12;
+      --ink-mid:    #141219;
+      --ink-light:  #1C1924;
+      --ink-border: #2A2638;
+      --cream:      #F0E6CA;
+      --r-sm: 5px;
+      --r-md: 12px;
+      --r-lg: 20px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    /* ── Body — same layered background as NoteShelf ── */
     body {
-      margin: 0;
-      padding: 0;
-      background-color: #1c1c1c; /* Dark background for contrast */
-      color: #FFD700; /* Gold color */
-      font-family: 'Playfair Display', serif; /* Formal, rich font */
+      font-family: 'EB Garamond', Georgia, serif;
+      background-color: var(--obsidian);
+      background-image:
+        radial-gradient(ellipse 90% 55% at 50% -5%,  rgba(255,215,0,0.07) 0%, transparent 65%),
+        radial-gradient(ellipse 55% 40% at 90% 100%, rgba(255,215,0,0.04) 0%, transparent 60%),
+        repeating-linear-gradient(0deg,  transparent, transparent 39px, rgba(255,215,0,0.022) 39px, rgba(255,215,0,0.022) 40px),
+        repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(255,215,0,0.016) 39px, rgba(255,215,0,0.016) 40px);
+      color: var(--gold);
+      min-height: 100vh;
     }
 
-    .header {
-      text-align: center;
-      font-size: 4rem;
-      margin: 50px 0 30px 0;
-      text-shadow: 
-        0 0 10px #FFD700, 
-        0 0 20px #FFD700, 
-        0 0 30px #FFD700,
-        0 0 40px #FFD700;
-    }
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar            { width: 5px; }
+    ::-webkit-scrollbar-track      { background: var(--ink); }
+    ::-webkit-scrollbar-thumb      { background: var(--gold-dim); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover{ background: var(--gold); }
 
-    .updates {
-      max-width: 800px;
+    /* ── Page wrapper ── */
+    .page {
+      max-width: 780px;
       margin: 0 auto;
-      font-size: 1.2rem;
-      line-height: 1.8;
-      padding: 0 20px;
+      padding: 60px 24px 80px;
     }
 
-    .update-item {
-      margin-bottom: 20px;
-      padding: 15px;
-      border-left: 4px solid #FFD700;
-      background: rgba(255, 215, 0, 0.05);
-      border-radius: 5px;
-      transition: transform 0.2s;
+    /* ── Header ornament ── */
+    .ornament {
+      text-align: center;
+      font-family: 'Cinzel', serif;
+      font-size: 11px;
+      letter-spacing: 8px;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      opacity: 0.55;
+      margin-bottom: 18px;
     }
 
-    .update-item:hover {
-      transform: scale(1.02);
+    /* ── Main title ── */
+    .page-title {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(22px, 5vw, 42px);
+      font-weight: 900;
+      text-align: center;
+      color: var(--gold);
+      letter-spacing: 4px;
+      text-shadow: 0 0 40px var(--gold-glow), 0 2px 6px rgba(0,0,0,0.9);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
     }
 
+    .page-title svg {
+      width: clamp(22px, 4vw, 36px);
+      height: clamp(22px, 4vw, 36px);
+      color: var(--gold-dim);
+      flex-shrink: 0;
+    }
+
+    /* ── Subtitle ── */
+    .page-subtitle {
+      font-family: 'Cinzel', serif;
+      font-size: 11px;
+      font-weight: 400;
+      letter-spacing: 7px;
+      color: var(--gold-dim);
+      text-transform: uppercase;
+      text-align: center;
+      opacity: 0.7;
+      margin-bottom: 48px;
+    }
+
+    /* ── Divider ── */
+    .divider {
+      text-align: center;
+      font-family: 'Cinzel', serif;
+      font-size: 11px;
+      letter-spacing: 5px;
+      color: var(--gold-dim);
+      opacity: 0.4;
+      margin-bottom: 40px;
+    }
+
+    /* ── Timeline container ── */
+    .timeline {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    /* Vertical line */
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 110px;
+      top: 0; bottom: 0;
+      width: 1px;
+      background: linear-gradient(180deg, transparent 0%, var(--ink-border) 8%, var(--ink-border) 92%, transparent 100%);
+    }
+
+    /* ── Single update entry ── */
+    .update-entry {
+      display: flex;
+      gap: 0;
+      align-items: flex-start;
+      margin-bottom: 32px;
+      opacity: 0;
+      transform: translateY(14px);
+      animation: entryIn 0.4s ease forwards;
+    }
+
+    /* Staggered entrance delays */
+    .update-entry:nth-child(1)  { animation-delay: 0.05s; }
+    .update-entry:nth-child(2)  { animation-delay: 0.10s; }
+    .update-entry:nth-child(3)  { animation-delay: 0.15s; }
+    .update-entry:nth-child(4)  { animation-delay: 0.20s; }
+    .update-entry:nth-child(5)  { animation-delay: 0.25s; }
+    .update-entry:nth-child(6)  { animation-delay: 0.30s; }
+    .update-entry:nth-child(7)  { animation-delay: 0.35s; }
+    .update-entry:nth-child(8)  { animation-delay: 0.40s; }
+    .update-entry:nth-child(9)  { animation-delay: 0.45s; }
+    .update-entry:nth-child(10) { animation-delay: 0.50s; }
+
+    @keyframes entryIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Date column */
     .update-date {
-      font-weight: bold;
-      margin-bottom: 5px;
-      color: #fff8dc; /* Lighter gold/cream for contrast */
+      width: 110px;
+      flex-shrink: 0;
+      padding-right: 24px;
+      padding-top: 14px;
+      text-align: right;
+      font-family: 'Cinzel', serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      color: var(--gold-dim);
+      line-height: 1.3;
+    }
+
+    .update-date .year {
+      display: block;
+      font-size: 9px;
+      letter-spacing: 2px;
+      opacity: 0.55;
+      margin-top: 2px;
+    }
+
+    /* Timeline node */
+    .update-node {
+      position: relative;
+      flex-shrink: 0;
+      width: 12px;
+      height: 12px;
+      margin-top: 17px;
+      margin-right: 24px;
+    }
+
+    .update-node::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: var(--ink-mid);
+      border: 1px solid var(--gold-dim);
+      transition: all 0.25s;
+    }
+
+    .update-entry:hover .update-node::before {
+      background: var(--gold);
+      border-color: var(--gold);
+      box-shadow: 0 0 10px var(--gold-glow);
+    }
+
+    /* Card */
+    .update-card {
+      flex: 1;
+      background: linear-gradient(135deg, var(--ink-mid), var(--ink));
+      border: 1px solid var(--ink-border);
+      border-radius: var(--r-md);
+      padding: 16px 20px;
+      transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Left accent bar */
+    .update-card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background: var(--gold-dim);
+      opacity: 0.4;
+      transition: opacity 0.25s, background 0.25s;
+      border-radius: var(--r-sm) 0 0 var(--r-sm);
+    }
+
+    .update-entry:hover .update-card {
+      border-color: rgba(184,150,12,0.4);
+      box-shadow: 0 6px 28px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,215,0,0.04);
+      transform: translateX(3px);
+    }
+
+    .update-entry:hover .update-card::before {
+      opacity: 1;
+      background: var(--gold);
+    }
+
+    /* Version / tag badge */
+    .update-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-family: 'Cinzel', serif;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      background: rgba(255,215,0,0.06);
+      border: 1px solid rgba(184,150,12,0.35);
+      border-radius: 20px;
+      padding: 3px 10px;
+      margin-bottom: 10px;
+    }
+
+    .update-tag svg { width: 10px; height: 10px; flex-shrink: 0; }
+
+    .update-tag.major {
+      color: var(--gold);
+      background: rgba(255,215,0,0.1);
+      border-color: rgba(184,150,12,0.55);
+    }
+
+    /* Title of update */
+    .update-title {
+      font-family: 'Cinzel', serif;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: var(--gold);
+      margin-bottom: 8px;
+    }
+
+    /* Changes list */
+    .update-changes {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .update-changes li {
+      font-family: 'EB Garamond', serif;
+      font-size: 15px;
+      color: var(--cream);
+      opacity: 0.85;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      line-height: 1.55;
+    }
+
+    .update-changes li::before {
+      content: '';
+      display: inline-block;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--gold-dim);
+      flex-shrink: 0;
+      margin-top: 8px;
+    }
+
+    /* ── Footer ── */
+    .page-footer {
+      text-align: center;
+      margin-top: 60px;
+      padding-top: 32px;
+      border-top: 1px solid var(--ink-border);
+    }
+
+    .page-footer p {
+      font-family: 'Cinzel', serif;
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      opacity: 0.45;
     }
   </style>
 </head>
 <body>
-  <div class="header">Update Logs:</div>
-  
-  <div class="updates">
-    <div class="update-item">
-      <div class="update-date">2026-03-31</div>
-      <div>Added Chat system</div>
+<div class="page">
+
+  <!-- Ornamental top line -->
+  <div class="ornament">◆ &nbsp; NoteShelf &nbsp; ◆</div>
+
+  <!-- Title -->
+  <h1 class="page-title">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+    </svg>
+    Update Logs
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+    </svg>
+  </h1>
+  <p class="page-subtitle">Changelog &amp; Release Notes</p>
+
+  <!-- Divider -->
+  <div class="divider">◆ &nbsp;─────────────&nbsp; ◆ &nbsp;─────────────&nbsp; ◆</div>
+
+  <!-- Timeline -->
+  <div class="timeline">
+
+    <!-- ── Entry: add new ones at the top ── -->
+
+    <div class="update-entry">
+      <div class="update-date">
+        Mar 31
+        <span class="year">2026</span>
+      </div>
+      <div class="update-node"></div>
+      <div class="update-card">
+        <span class="update-tag major">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          Major
+        </span>
+        <div class="update-title">Global Chat System</div>
+        <ul class="update-changes">
+          <li>Added real-time global chat powered by Firebase</li>
+          <li>User avatars shown in chat alongside messages</li>
+          <li>Typing indicators &amp; online presence counter</li>
+          <li>Message edit &amp; delete for own messages</li>
+          <li>Unread badge on chat toggle button</li>
+          <li>Profanity filter applied to all messages</li>
+        </ul>
+      </div>
     </div>
+
+    <!-- ── Template for future entries — copy &amp; paste ──
+    <div class="update-entry">
+      <div class="update-date">
+        Mon DD
+        <span class="year">YYYY</span>
+      </div>
+      <div class="update-node"></div>
+      <div class="update-card">
+        <span class="update-tag">Patch</span>
+        <div class="update-title">Short title here</div>
+        <ul class="update-changes">
+          <li>Change one</li>
+          <li>Change two</li>
+        </ul>
+      </div>
+    </div>
+    ── -->
+
+  </div><!-- /.timeline -->
+
+  <!-- Footer -->
+  <div class="page-footer">
+    <p>🕮 &nbsp; NoteShelf &nbsp; · &nbsp; All rights reserved</p>
   </div>
+
+</div>
 </body>
 </html>
